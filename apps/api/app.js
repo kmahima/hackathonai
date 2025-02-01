@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors')
 const swagger = require('./swagger');
-const BikeStoreAgent = require('./bikestore/agent');
+const AnkoAIAgent = require('./agent/agent');
 
 const app = express();
 app.use(express.json());
@@ -31,7 +31,7 @@ app.get('/', (req, res) => {
  * @openapi
  * /ai:
  *   post:
- *     description: Run the Contoso Bike Store AI agent
+ *     description: Run the AnkoAIAgent with the given prompt.
  *     requestBody:
  *       required: true
  *       content:
@@ -57,7 +57,7 @@ app.post('/ai', async (req, res) => {
     if (agentInstancesMap.has(session_id)) {
         agent = agentInstancesMap.get(session_id);
     } else {
-        agent = new BikeStoreAgent();
+        agent = new AnkoAIAgent();
         agentInstancesMap.set(session_id, agent);
     }
 

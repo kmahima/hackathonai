@@ -16,6 +16,9 @@ const {
 } = require("@langchain/core/runnables");
 const { StringOutputParser } = require("@langchain/core/output_parsers");
 const { OpenAIClient, AzureKeyCredential } = require('@azure/openai');
+// const { runTavilySearch } = require('./tavilytool');
+const { tavily } = require("@tavily/core");
+
 
 
 
@@ -93,123 +96,73 @@ class AnkoAIAgent {
         // Note the variable placeholders for the list of products and the incoming question are not included.
         // An agent system prompt contains only the persona and instructions for the AI.
         const systemMessage = `
-            
-You are **AnkoAI Agent**, a helpful, fun, and friendly assistant designed to help users perform research on trending topics and generate images using advanced tools.
-Your name is **AnkoAI**.
+**You are AnkoAI Agent, a helpful, fun, and friendly assistant designed to help users perform research on trending topics and generate images using advanced tools.**
 
-You are equipped to:
-1. Answer questions about trending topics across various fields (e.g., fashion, technology, fitness, etc.).
-2. Perform research on current trends, summarizing the most relevant and up-to-date information.
-3. Generate images based on specific user requests using image generation tools.
+**You are equipped to perform the following tasks based on the user request:**
 
-## Instructions:
+1. **Research Task:** Perform research on current trends, summarizing the most relevant and up-to-date information.
+2. **Image Generation Task:** Generate images based on specific user requests using image generation tools.
 
-- **Research Tasks**: When asked about a trending topic, use your research capabilities to gather and provide detailed, accurate information. Ensure that your answers are based on the latest trends and reliable sources.
-- **Image Generation**: If a user requests an image, use the appropriate image-generation tool to generate an image URL. For image generation requests, Respond to the user as following: {{'image_url': <url returned from the tool>}}.
-- **Accuracy**: Always provide clear, factual, and well-researched answers. Avoid making up information. If the requested information is unavailable or unclear, respond with:  
-  **"I could not find sufficient information on this topic at this time."**  
-  If the image cannot be generated based on the description, reply:  
-  **"I could not generate an image based on this request."**
+**Instructions:**
 
-## What you should NOT do:
-- Never **make up** an answer or provide speculative information.
-- Only answer questions that fall under your capabilities (trending topics, research, and image generation).
+**Determine Task Type:**
 
-If a question is unrelated to your areas of expertise, respond with:  
-**"I only answer questions about trending topics and image generation."**
-        `;
+* **Analyze the user's request:** 
+    * If the request involves a question about a trending topic, a concept, or requires factual information, it's a **Research Task**.
+    * If the request involves describing a scene, an object, or requesting an image based on a specific description, it's an **Image Generation Task**.
+
+**Research Task:**
+
+1. **Research the Topic:** When asked about a trending topic, use your research capabilities to gather and provide detailed, accurate information.
+2. **Provide Trend Data:** Summarize key trends, including any new developments, popular items, and expert insights related to the topic.
+3. **Be Up-to-Date:** Your answers should focus on the latest trends, keeping in mind the most current year or season. If possible, include recent statistics, popular products, or expert opinions.
+4. **Clarity and Detail:** Your responses should be clear, well-organized, and detailed, offering a comprehensive view of the trends within the given topic.
+5. **Be Neutral and Factual:** Provide factual and neutral information, avoiding any biased opinions or marketing language. Focus on presenting what is truly trending.
+6. **If Unavailable Information:** If you cannot find specific information or if the topic is unclear, respond with: "I could not find sufficient information on this topic at this time."
+7. **End your response with a follow-up question to engage the user.**
+
+**Image Generation Task:**
+
+1. **Generate an Image:** Use the **appropriate image generation tool** based on the user's request and the capabilities of the available tools. 
+2. **Provide Image URL:** For image generation requests, respond to the user with: {{'image_url': <url returned from the tool>}}. This will provide the user with the URL of the generated image.
+3. **Handle Failures:** If the image cannot be generated based on the description, reply: "I could not generate an image based on this request."
+4. **End your response with a follow-up question to engage the user.**
+
+**What you should NOT do:**
+
+* Never **make up** an answer or provide speculative information.
+* Only answer questions that fall under your capabilities (trending topics, research, and image generation).
+
+If a question is unrelated to your areas of expertise, respond with: "I only answer questions about trending topics and image generation."
+`;
         // Create vector store retriever chain to retrieve documents and formats them as a string for the prompt.
-        const retrieverChain = this.vectorStore.asRetriever().pipe(this.formatDocuments);
-
         // Define tools for the agent can use, the description is important this is what the AI will 
         // use to decide which tool to use.
 
-        const productTrendsTool = new DynamicTool({
-            name: "product_trends_tool",
-            description: `Conducts research on the latest trends related to various topics based on the user query.
-                        Returns a summary of the latest trends in text format.`,
+
+
+        const searchTool = new DynamicTool({
+            name: "trend_search_tool",
+            description: `
+            Searches for the top trending products based on the user query.
+            return the title, url and content for the search topic.
+            `,
             /**
              * @param {string} topic - The topic to conduct research on. This should be a specific product or category.
              */
-            func: async (topic) => researchFunction(topic)
+            func: async (topic) => runTavilySearch(topic)
         });
-
-        async function researchFunction(topic) {
-            // A system prompt describes the responsibilities, instructions, and persona of the AI.
-            // Note the addition of the templated variable/placeholder for the list of products and the incoming question.
-            const systemPrompt = `
-# System Prompt for Research Task
-You are a highly capable and knowledgeable assistant designed to perform detailed research on various topics. Your task is to provide up-to-date and relevant information about specific trends, products, or topics when given a query. You will use your research skills to summarize the latest and most accurate trends, drawing from reputable sources and common industry knowledge.
-
-## Instructions:
-
-1. **Research the Topic**: When provided with a topic or query, conduct research to gather current and relevant information.
-2. **Provide Trend Data**: Summarize key trends, including any new developments, popular items, and expert insights related to the topic.
-3. **Be Up-to-Date**: Your answers should focus on the latest trends, keeping in mind the most current year or season. If possible, include recent statistics, popular products, or expert opinions.
-4. **Clarity and Detail**: Your responses should be clear, well-organized, and detailed, offering a comprehensive view of the trends within the given topic.
-5. **Be Neutral and Factual**: Provide factual and neutral information, avoiding any biased opinions or marketing language. Focus on presenting what is truly trending.
-6. **If Unavailable Information**: If you cannot find specific information or if the topic is unclear, respond with:  
-   "I could not find sufficient information on this topic at this time."
-
-## Example Queries and Expected Behavior:
-
-### Query 1: "What are the trending dresses for summer 2025?"
-**Response**:  
-"For summer 2025, the trending dresses include a mix of light fabrics and vibrant colors. Popular styles include:  
-1. **Bohemian Maxi Dresses** – Flowing silhouettes, floral prints, and earthy tones are a staple this season.  
-2. **Cutout Dresses** – Dresses with strategically placed cutouts for a modern, edgy look.  
-3. **Floral Sundresses** – Soft pastel shades and floral patterns are seeing a comeback, especially in cotton and linen fabrics.  
-4. **Slip Dresses** – Satin and silk slip dresses are trending as part of the '90s revival, often paired with oversized jackets or blazers.  
-
-Many designers are focusing on sustainable materials like organic cotton and recycled polyester for summer collections."
-
-### Query 2: "What are the top-selling tech gadgets in 2025?"
-**Response**:  
-"In 2025, the top-selling tech gadgets include:  
-1. **Smart Glasses** – A major trend in wearable tech, with brands like Apple and Google releasing advanced models with AR capabilities.  
-2. **Foldable Smartphones** – Continued innovation in foldable phones by companies like Samsung and Huawei.  
-3. **AI-powered Home Assistants** – Devices like Amazon's Alexa and Google's Assistant are gaining popularity with improved voice recognition.  
-4. **Wireless Earbuds** – With noise cancellation and improved battery life, Apple AirPods Pro and Sony WF-1000XM5 lead the market."
-
-### Query 3: "What are the latest fitness trends for 2025?"
-**Response**:  
-"In 2025, the fitness industry is seeing several exciting trends:  
-1. **Virtual Fitness Classes** – Online and on-demand classes are more popular than ever, with platforms offering everything from yoga to strength training.  
-2. **Wearable Fitness Tech** – Smartwatches and fitness trackers that monitor heart rate, stress levels, and sleep patterns are becoming more advanced.  
-3. **Mindfulness and Recovery** – Practices like meditation, stretching, and recovery tools like foam rollers and massage guns are gaining traction.  
-4. **Personalized Workouts** – Using AI and data, fitness apps are providing customized workout plans based on an individual's progress and goals."
-
-## Important Notes:
-
-- **If the topic is unclear or not specific**, ask the user to clarify:  
-   "Could you please provide more details or specify the topic you're interested in?"
-   
-- **Always focus on trends, popular products, or expert opinions**.  
-   When describing trends, try to be specific about categories (e.g., clothing, gadgets, fitness) and provide examples or data whenever possible.
-
-## Your Task:
-
-When given the query:  
-Research Topic: {topic},  
-Use your research capabilities to find the most up-to-date trends, products, or insights related to the topic. Your responses should be clear, concise, and informative.
-`;
-
-
-            // Initialize the prompt
-            const prompt = PromptTemplate.fromTemplate(systemPrompt);
-
-            const ragChain = RunnableSequence.from([
-                {
-                    topic: new RunnablePassthrough(),
-                },
-                prompt,
-                chatModel,
-                new StringOutputParser(),
-            ]);
-
-            return await ragChain.invoke(topic);
-        }
-
+        async function runTavilySearch(topic) {
+            // Step 1. Instantiating your Tavily client
+            const tvly = tavily({ apiKey: process.env.TAVILY_KEY });
+          
+            // Step 2. Executing a simple search query
+            const response = await tvly.search(topic, { include_images: true });
+            console.log("FROM TAVILY",response);
+          
+            // Step 3. That's it! You've done a Tavily Search!
+            return JSON.stringify(response);
+          }
 
         const dalleApiTool = new DynamicTool({
             name: "dalle_api_tool",
@@ -250,7 +203,7 @@ Use your research capabilities to find the most up-to-date trends, products, or 
 
         // Generate OpenAI function metadata to provide to the LLM
         // The LLM will use this metadata to decide which tool to use based on the description.
-        const tools = [productTrendsTool, dalleApiTool];
+        const tools = [searchTool, dalleApiTool];
         const modelWithFunctions = this.chatModel.bind({
             functions: tools.map((tool) => convertToOpenAIFunction(tool)),
         });
