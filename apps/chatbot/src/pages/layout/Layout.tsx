@@ -10,9 +10,9 @@ const Layout = () => {
             <header className={styles.header} role={"banner"}>
                 <div className={styles.headerContainer}>
                     <Link to="/" className={styles.headerTitleContainer}>
-                        <h3 className={styles.headerTitle}>Contoso Bike Store Chatbot </h3>
+                        <h3 className={styles.headerTitle}>Anko Forger</h3>
                     </Link>
-                    <nav>
+                    {/* <nav>
                         <ul className={styles.headerNavList}>
                             <li className={styles.headerNavLeftMargin}>
                                 <a href="/design" >Design</a>
@@ -29,15 +29,15 @@ const Layout = () => {
                             <li>
                                 <a href="/seo" >SEO</a>
                             </li>
-                            {/* <li>
+                            <li>
                                 <a href="/search" >Search</a>
-                            </li> */}
+                            </li>
                             <li>
                                 <a href="/automation" >Automation</a>
                             </li>
                         </ul>
-                    </nav>
-                    <h4 className={styles.headerRightText}>AI App in 1 Day</h4>
+                    </nav> */}
+                    {/* <h4 className={styles.headerRightText}>AI App in 1 Day</h4> */}
                 </div>
             </header>
 

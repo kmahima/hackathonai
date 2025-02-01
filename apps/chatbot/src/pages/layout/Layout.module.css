@@ -19,9 +19,9 @@
 
 .headerTitleContainer {
     display: flex;
-    align-items: center;
+    align-items: left;
     margin-right: 40px;
-    color: #f2f2f2;
+    color: #e396cc;
     text-decoration: none;
 }
 
