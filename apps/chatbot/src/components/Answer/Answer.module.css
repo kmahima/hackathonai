@@ -12,6 +12,15 @@
     font-size: 28px;
 }
 
+img {
+    max-width: 100%;     /* Ensures the image doesn't overflow */
+    height: auto;        /* Maintain aspect ratio */
+    max-height: 300px;   /* Limit the height */
+    display: block;      /* Prevents inline spacing issues */
+    margin: 0 auto;      /* Centers the image if you want */
+}
+
+
 .answerText {
     font-size: 16px;
     font-weight: 400;

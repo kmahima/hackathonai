@@ -65,6 +65,7 @@ export type ChatAppResponseOrError = {
 
 export type ChatAppResponse = {
     message: string;
+    citations: string[];
 };
 
 export type ChatAppRequestContext = {
