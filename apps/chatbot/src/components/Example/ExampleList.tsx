@@ -3,7 +3,7 @@ import { Example } from "./Example";
 import styles from "./Example.module.css";
 
 const DEFAULT_EXAMPLES: string[] = [
-    "Latest trends in summer dresses",
+    "Latest trends in summer dresses for 2025",
     "What are the most popular sneakers currently?",
     "What are the best selling Christmas gifts of all times?"
 ];

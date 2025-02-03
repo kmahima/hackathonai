@@ -1,146 +1,165 @@
 .answerContainer {
-    padding: 20px;
-    background: rgb(249, 249, 249);
-    border-radius: 8px;
+    padding: 24px;
+    background: #f9f9f9;
+    border-radius: 12px;
     box-shadow:
-        0px 2px 4px rgba(0, 0, 0, 0.14),
-        0px 0px 2px rgba(0, 0, 0, 0.12);
+        0px 4px 6px rgba(0, 0, 0, 0.1),
+        0px 2px 4px rgba(0, 0, 0, 0.1);
     outline: transparent solid 1px;
+    max-width: 800px;
+    margin: 20px auto;
 }
 
-.answerLogo {
-    font-size: 28px;
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #ddd;
 }
-
-img {
-    max-width: 100%;     /* Ensures the image doesn't overflow */
-    height: auto;        /* Maintain aspect ratio */
-    max-height: 300px;   /* Limit the height */
-    display: block;      /* Prevents inline spacing issues */
-    margin: 0 auto;      /* Centers the image if you want */
-}
-
 
 .answerText {
     font-size: 16px;
-    font-weight: 400;
-    line-height: 22px;
+    line-height: 1.6;
+    color: #333;
+    padding: 16px 0;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+img:hover {
+    transform: scale(1.05); /* Slight zoom effect on hover */
+}
+
+.imageInText {
+    display: block;
+    margin: 16px 0;
+    border-radius: 8px;
+    max-width: 50%;  /* Set max width to 50% or adjust as needed */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+    cursor: pointer;
+}
+
+/* .modalContent {
+    position: relative;
+    max-width: 90%;
+    max-height: 90vh;
+    overflow: auto;
+} */
+
+/* .modalImage {
+    max-width: 100%;
+    max-height: 80vh;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+} */
+
+.citationsContainer {
     padding-top: 16px;
-    padding-bottom: 16px;
-    white-space: pre-line;
-}
-
-.answerText table {
-    border-collapse: collapse;
-}
-
-.answerText td,
-.answerText th {
-    border: 1px solid;
-    padding: 5px;
-}
-
-.selected {
-    outline: 2px solid rgba(115, 118, 225, 1);
 }
 
 .citationLearnMore {
-    margin-right: 5px;
     font-weight: 600;
-    line-height: 24px;
+    font-size: 14px;
+    color: #444;
 }
 
 .citation {
     font-weight: 500;
-    line-height: 24px;
-    text-align: center;
-    border-radius: 4px;
-    padding: 0px 8px;
-    background: #d1dbfa;
-    color: #123bb6;
+    font-size: 14px;
+    color: #2a7bf2;
     text-decoration: none;
     cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 8px;
+    background: #e0f2ff;
+    transition: background-color 0.3s ease;
 }
 
 .citation:hover {
+    background-color: #d1e4f7;
     text-decoration: underline;
 }
 
-.followupQuestionsList {
-    margin-top: 10px;
-}
 
-.followupQuestionLearnMore {
-    margin-right: 5px;
-    font-weight: 600;
-    line-height: 24px;
-}
+/* .selected {
+    outline: 2px solid #5f63f2;
+} */
 
-.followupQuestion {
-    font-weight: 600;
-    line-height: 24px;
-    text-align: center;
-    border-radius: 4px;
-    padding: 0px 8px;
-    background: #e8ebfa;
-    color: black;
-    font-style: italic;
-    text-decoration: none;
-    cursor: pointer;
-}
+/* Existing styles remain the same */
 
-.supContainer {
-    text-decoration: none;
-    cursor: pointer;
-}
+/* .modalContent to ensure button positioning */
+/* Existing styles remain the same */
 
-.supContainer:hover {
-    text-decoration: underline;
-}
-
-sup {
+/* .modalContent to ensure button positioning */
+.modalContent {
     position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 10px;
-    font-weight: 600;
-    vertical-align: top;
-    top: -1;
-    margin: 0px 2px;
-    min-width: 14px;
-    height: 14px;
-    border-radius: 3px;
-    background: #d1dbfa;
-    color: #123bb6;
-    text-decoration-color: transparent;
-    outline: transparent solid 1px;
+    max-width: 90%;
+    max-height: 90vh;
+    overflow: auto;
+    padding: 20px;
+    background: white; /* Ensure the content has a background */
+    border-radius: 8px;
+}
+
+/* Style for the Send to Collaboration button */
+.sendToCollaborationButton {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 12px 24px;
+    background-color: #555;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;  /* Makes the text bold */
     cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    z-index: 1010; /* Ensure it's above other content */
 }
 
-.retryButton {
-    width: fit-content;
+/* Button hover effect */
+.sendToCollaborationButton:hover {
+    background-color: #010202;
+    transform: scale(1.05); /* Slight grow effect on hover */
 }
 
-@keyframes loading {
-    0% {
-        content: "";
-    }
-    25% {
-        content: ".";
-    }
-    50% {
-        content: "..";
-    }
-    75% {
-        content: "...";
-    }
-    100% {
-        content: "";
-    }
+/* Optional: Button active effect */
+.sendToCollaborationButton:active {
+    background-color: #004a74;
+    transform: scale(0.98); /* Button shrinks slightly when clicked */
 }
 
-.loadingdots::after {
-    content: "";
-    animation: loading 1s infinite;
+/* Ensure modal image has some padding from the button */
+.modalImage {
+    max-width: 100%;
+    max-height: 80vh;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    margin-top: 20px; /* Give space between image and button */
 }
+

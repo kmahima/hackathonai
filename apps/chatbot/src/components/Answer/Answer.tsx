@@ -4,7 +4,6 @@ import DOMPurify from "dompurify";
 import parse from "html-react-parser"; // Import html-react-parser
 import styles from "./Answer.module.css";
 import { ChatAppResponse, getCitationFilePath } from "../../api";
-import { parseAnswerToHtml } from "./AnswerParser";
 import { AnswerIcon } from "./AnswerIcon";
 
 // Use named import for marked
@@ -36,6 +35,9 @@ export const Answer: React.FC<Props> = ({
     // State to hold parsed HTML content
     const [htmlContent, setHtmlContent] = useState<string>("");
 
+    // State to handle modal visibility and the selected image URL
+    const [modalImageUrl, setModalImageUrl] = useState<string | null>(null);
+
     // Convert Markdown content to HTML using the `marked` library
     useEffect(() => {
         const convertMarkdownToHtml = async () => {
@@ -58,10 +60,26 @@ export const Answer: React.FC<Props> = ({
         convertMarkdownToHtml();
     }, [messageContent]); // Triggered whenever the message content changes
 
+    // Function to handle image click and show modal
+    const handleImageClick = (src: string) => {
+        setModalImageUrl(src); // Set the selected image URL to show in the modal
+    };
+
+    // Function to close the modal
+    const closeModal = () => {
+        setModalImageUrl(null); // Reset the modal URL to close it
+    };
+
+    // Handle "Send to Collaboration" button click
+    const handleSendToCollaboration = () => {
+        console.log("Send to Collaboration button clicked");
+        // You can add any logic here for sending to collaboration
+    };
+
     return (
         <Stack className={`${styles.answerContainer} ${isSelected && styles.selected}`} verticalAlign="space-between">
             <Stack.Item>
-                <Stack horizontal horizontalAlign="space-between">
+                <Stack horizontal horizontalAlign="space-between" className={styles.header}>
                     <AnswerIcon />
                     <div></div>
                 </Stack>
@@ -74,17 +92,44 @@ export const Answer: React.FC<Props> = ({
                         replace: (domNode) => {
                             // Check if it's an image tag
                             if (domNode.type === 'tag' && domNode.tagName === 'img') {
-                                // Apply inline styles to the image element
-                                domNode.attribs.style = 'max-width: 100%; height: auto; max-height: 300px; display: block; margin: 0 auto;';
+                                const imageSrc = domNode.attribs.src;
+
+                                // Make the image clickable by wrapping it with an anchor tag
+                                return (
+                                    <a href="#" onClick={(e) => { e.preventDefault(); handleImageClick(imageSrc); }}>
+                                        <img
+                                            src={imageSrc}
+                                            alt="Image"
+                                            className={styles.imageInText}
+                                        />
+                                    </a>
+                                );
                             }
                         }
                     }) : null}
                 </div>
             </Stack.Item>
 
+            {/* Modal for displaying larger image */}
+            {modalImageUrl && (
+                <div className={styles.modal} onClick={closeModal}>
+                    <div className={styles.modalContent}>
+                        {/* "Send to Collaboration" Button */}
+                        <button
+                            className={styles.sendToCollaborationButton}
+                            onClick={handleSendToCollaboration}
+                        >
+                            Send to Collaboration
+                        </button>
+
+                        <img src={modalImageUrl} alt="Expanded" className={styles.modalImage} />
+                    </div>
+                </div>
+            )}
+
             {!!answer.citations?.length && (
                 <Stack.Item>
-                    <Stack horizontal wrap tokens={{ childrenGap: 5 }}>
+                    <Stack horizontal wrap tokens={{ childrenGap: 5 }} className={styles.citationsContainer}>
                         <span className={styles.citationLearnMore}>Citations:</span>
                         {answer.citations.map((x, i) => {
                             const path = getCitationFilePath(x);

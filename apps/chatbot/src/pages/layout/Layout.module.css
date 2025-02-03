@@ -4,10 +4,21 @@
     height: 100%;
 }
 
+/* .header {
+    background-color: #222222;
+    color: #f2f2f2;
+    z-index: 1; 
+} */
 .header {
     background-color: #222222;
     color: #f2f2f2;
+    z-index: 2; /* Increase z-index to make sure header stays on top of the sidenav */
+    position: sticky; /* Make the header sticky */
+    top: 0; /* Stick to the top of the page */
+    width: 100%; /* Ensure the header spans the entire width */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Optional: Add shadow for some visual depth */
 }
+
 
 .headerContainer {
     display: flex;
@@ -25,62 +36,72 @@
     text-decoration: none;
 }
 
-.headerLogo {
-    height: 40px;
-}
-
 .headerTitle {
     margin-left: 12px;
     font-weight: 600;
 }
 
-.headerNavList {
+/* Main container for layout (header + sidenav + content) */
+.mainContainer {
     display: flex;
-    list-style: none;
-    padding-left: 0;
+    height: 100%;
 }
 
-.headerNavList li {
-    margin: 5px;
+/* Sidenav */
+.sidenav {
+    width: 250px;
+    background-color: #222222;
+    color: white;
+    padding-top: 80px;  /* Increased padding to shift items further down */
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
 }
 
-.headerNavList li a {
-    color: #f2f2f2;
+.sidenavList {
+    list-style-type: none;
+    padding: 0;
 }
 
-.headerNavPageLink {
-    color: #f2f2f2;
+.sidenavList li {
+    margin: 20px 0;  /* Space between menu items */
+}
+
+/* Menu item link */
+.sidenavLink {
+    display: block;
+    padding: 15px 20px;  /* Increased padding for better spacing */
+    color: white;
     text-decoration: none;
-    opacity: 0.75;
-
-    transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-    transition-duration: 500ms;
-    transition-property: opacity;
+    font-size: 16px;
+    font-weight: 700;  /* Bolder text */
+    opacity: 0.8;
+    transition: opacity 0.3s ease, background-color 0.3s ease;
 }
 
-.headerNavPageLink:hover {
+/* Hover effect */
+.sidenavLink:hover {
+    opacity: 1;
+    background-color: #444;
+}
+
+/* Active state styling */
+.sidenavLinkActive {
+    background-color: #555;
     opacity: 1;
 }
 
-.headerNavPageLinkActive {
-    color: #f2f2f2;
-    text-decoration: none;
+/* Highlighting AI Design Assistant */
+.sidenavLinkAI {
+    background-color: #555;  /* Highlighted background color */
+    color: white;
+    font-weight: 800;  /* Bolder text for highlight */
 }
 
-.headerNavLeftMargin {
-    margin-left: 20px;
-}
-
-.headerRightText {
-    font-weight: normal;
-    margin-left: 40px;
-}
-
-.microsoftLogo {
-    height: 23px;
-    font-weight: 600;
-}
-
-.githubLogo {
-    height: 20px;
+/* Content area */
+.content {
+    margin-left: 250px;  /* To account for the sidenav width */
+    padding: 20px;
+    flex-grow: 1;
 }

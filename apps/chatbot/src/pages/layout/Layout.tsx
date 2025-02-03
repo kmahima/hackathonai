@@ -1,7 +1,4 @@
 import { Outlet, NavLink, Link } from "react-router-dom";
-
-import github from "../../assets/github.svg";
-
 import styles from "./Layout.module.css";
 
 const Layout = () => {
@@ -10,38 +7,53 @@ const Layout = () => {
             <header className={styles.header} role={"banner"}>
                 <div className={styles.headerContainer}>
                     <Link to="/" className={styles.headerTitleContainer}>
-                        <h3 className={styles.headerTitle}>Anko Forger</h3>
+                        <h2 className={styles.headerTitle}>Anko Forger</h2>
                     </Link>
-                    {/* <nav>
-                        <ul className={styles.headerNavList}>
-                            <li className={styles.headerNavLeftMargin}>
-                                <a href="/design" >Design</a>
-                            </li>
-                            <li>
-                                <a href="/translation" >Translation</a>
-                            </li>
-                            <li>
-                                <a href="/vision" >Vision</a>
-                            </li>
-                            <li>
-                                <a href="/speech" >Speech</a>
-                            </li>
-                            <li>
-                                <a href="/seo" >SEO</a>
-                            </li>
-                            <li>
-                                <a href="/search" >Search</a>
-                            </li>
-                            <li>
-                                <a href="/automation" >Automation</a>
-                            </li>
-                        </ul>
-                    </nav> */}
-                    {/* <h4 className={styles.headerRightText}>AI App in 1 Day</h4> */}
                 </div>
             </header>
 
-            <Outlet />
+            <div className={styles.mainContainer}>
+                <nav className={styles.sidenav}>
+                    <ul className={styles.sidenavList}>
+                        <li>
+                            <NavLink
+                                to="/ai-design-assistant"
+                                className={`${styles.sidenavLink} ${styles.sidenavLinkAI}`}  // Hardcode selected styling
+                            >
+                                AI Design Assistant
+                            </NavLink>
+                        </li>
+                        <li>
+                            <NavLink
+                                to="/collaboration"
+                                className={({ isActive }) =>
+                                    isActive
+                                        ? `${styles.sidenavLink} ${styles.sidenavLinkActive}`
+                                        : styles.sidenavLink
+                                }
+                            >
+                                Collaboration
+                            </NavLink>
+                        </li>
+                        <li>
+                            <NavLink
+                                to="/design-submissions"
+                                className={({ isActive }) =>
+                                    isActive
+                                        ? `${styles.sidenavLink} ${styles.sidenavLinkActive}`
+                                        : styles.sidenavLink
+                                }
+                            >
+                                Design Submissions
+                            </NavLink>
+                        </li>
+                    </ul>
+                </nav>
+
+                <div className={styles.content}>
+                    <Outlet />
+                </div>
+            </div>
         </div>
     );
 };
