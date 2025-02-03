@@ -9,6 +9,7 @@ import "./index.css";
 
 import Layout from "./pages/layout/Layout";
 import Chat from "./pages/chat/Chat";
+import Approval from './pages/approvals/Approval';
 import Design from "./pages/design/Design";
 import Translation from "./pages/translation/Translation";
 import Vision from "./pages/vision/Vision";
@@ -30,6 +31,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
         <Route path="/" element={<Layout />}>
           <Route index element={<Chat />} />
           <Route path="/chat" element={<Chat />} />
+          <Route path="/approval" element={<Approval />} />
           <Route path="/design" element={<Design />} />
           <Route path="/translation" element={<Translation />} />
           <Route path="/vision" element={<Vision />} />
